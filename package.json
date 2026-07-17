@@ -1,0 +1,25 @@
+{
+  "name": "examenprogramacionweb2",
+  "version": "1.0.0",
+  "description": "---",
+  "main": "app.js",
+  "scripts": {
+    "start": "serve public -l 3000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AngelMazaFab/ExamenProgramacionWeb2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AngelMazaFab/ExamenProgramacionWeb2/issues"
+  },
+  "homepage": "https://github.com/AngelMazaFab/ExamenProgramacionWeb2#readme",
+  "dependencies": {
+    "serve": "^14.2.6"
+  }
+}
