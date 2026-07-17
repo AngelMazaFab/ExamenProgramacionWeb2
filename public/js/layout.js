@@ -75,6 +75,18 @@ function configurarNav(rol) {
     cargarParcial("/components/footer.html", "layout-footer"),
   ]);
 
+  // Configurar botón de cerrar sesión
+  const btnLogout = document.getElementById("btn-logout");
+  if (btnLogout) {
+    btnLogout.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const { auth } = await import("/js/firebase-config.js");
+      const { signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+      await signOut(auth);
+      location.href = "/login.html";
+    });
+  }
+
   // Si auth-guard ya disparó el evento, configurar el nav ahora.
   // Si no, esperar el evento.
   if (window.SIGEP?.rol) {

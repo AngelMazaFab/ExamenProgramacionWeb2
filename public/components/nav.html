@@ -18,12 +18,3 @@
   </ul>
 </nav>
 
-<script type="module">
-  import { auth } from "/js/firebase-config.js";
-  import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  document.getElementById("btn-logout")?.addEventListener("click", async (e) => {
-    e.preventDefault();
-    await signOut(auth);
-    location.href = "/login.html";
-  });
-</script>
