@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Dashboard de Ocupación</title>
+  <meta name="description" content="Panel de control con estadísticas en tiempo real de ocupación y facturación de UrbanPark S.A.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 2: DASHBOARD DE OCUPACIÓN -->
+    <section id="pagina-dashboard" class="bay">
+      <span class="bay-tag">P-02</span>
+      <h2>Dashboard de Ocupación</h2>
+
+      <!-- Tarjetas de estadísticas en tiempo real -->
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card__label">Plazas Totales</div>
+          <div class="stat-card__value" id="stat-total">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Ocupadas</div>
+          <div class="stat-card__value" id="stat-ocupadas">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Disponibles</div>
+          <div class="stat-card__value" id="stat-disponibles">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Tickets Hoy</div>
+          <div class="stat-card__value" id="stat-tickets">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Recaudado Hoy</div>
+          <div class="stat-card__value" id="stat-recaudado">—</div>
+        </div>
+      </div>
+
+      <article>
+        <h3>Ocupación General (Gráfica de Pastel)</h3>
+        <figure>
+          <canvas id="grafica-pastel" width="400" height="220" aria-label="Gráfica de pastel - porcentaje de ocupación"></canvas>
+          <figcaption>Porcentaje de ocupación general por sede</figcaption>
+        </figure>
+      </article>
+
+      <article>
+        <h3>Facturación por Hora (Gráfica de Barras)</h3>
+        <figure>
+          <canvas id="grafica-barras" width="800" height="260" aria-label="Gráfica de barras - facturación por hora"></canvas>
+          <figcaption>Picos de uso / facturación por hora</figcaption>
+        </figure>
+      </article>
+
+      <article>
+        <h3>Resumen de Sedes</h3>
+        <table>
+          <caption>Estado actual por sede</caption>
+          <thead>
+            <tr>
+              <th>Sede</th>
+              <th>Capacidad Total</th>
+              <th>Ocupados</th>
+              <th>Disponibles</th>
+              <th>% Ocupación</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-sedes">
+            <tr><td colspan="5">Cargando datos...</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <!-- Chart.js desde CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/dashboard.js"></script>
+</body>
+</html>

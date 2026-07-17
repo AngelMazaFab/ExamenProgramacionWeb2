@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Semilla de Base de Datos - SIGEP</title>
+  <style>body { font-family: sans-serif; padding: 2rem; background: #1a1a1a; color: #fff; }</style>
+</head>
+<body>
+  <h1>Inicializando Base de Datos...</h1>
+  <div id="log"></div>
+
+  <script type="module">
+    import { auth, db } from "/js/firebase-config.js";
+    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { doc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const logEl = document.getElementById("log");
+    const log = (msg) => { logEl.innerHTML += `<p>${msg}</p>`; console.log(msg); };
+
+    async function inicializar() {
+      try {
+        log("Iniciando creación de datos semilla...");
+
+        // 1. Crear usuario en Auth y en Firestore con el UID real
+        log("Creando usuario Super Admin en Authentication...");
+        const credencial = await createUserWithEmailAndPassword(auth, "admin@urbanpark.com", "Admin1234");
+        const uid = credencial.user.uid;
+        log(`✅ Usuario de Auth creado con UID: ${uid}`);
+
+        await setDoc(doc(db, "operadores", uid), {
+          nombres: "Admin",
+          apellidos: "Definitivo",
+          correo: "admin@urbanpark.com",
+          rol: "super_admin",
+          cargo: "supervisor",
+          turno: "matutino",
+          cedula_identidad: "1234567890",
+          activo: true
+        });
+        log("✅ Operador Super Admin vinculado en Firestore exitosamente.");
+
+        // 2. Crear Parqueadero
+        await addDoc(collection(db, "parqueaderos"), {
+          nombre: "Sede Centro 1",
+          direccion: "Av. Principal y Calle 10",
+          capacidad_total: 240,
+          activo: true
+        });
+        log("✅ Parqueadero inicial creado.");
+
+        // 3. Crear Tarifas
+        const tarifasRef = collection(db, "tarifas");
+        await addDoc(tarifasRef, { tipo_espacio: "estandar", precio_por_hora: 1.50, activo: true });
+        await addDoc(tarifasRef, { tipo_espacio: "motos", precio_por_hora: 0.80, activo: true });
+        await addDoc(tarifasRef, { tipo_espacio: "electrico", precio_por_hora: 2.00, activo: true });
+        await addDoc(tarifasRef, { tipo_espacio: "discapacitados", precio_por_hora: 0.75, activo: true });
+        log("✅ 4 Tarifas iniciales creadas.");
+
+        log("🎉 <b>¡Todo listo! Ya puedes iniciar sesión en login.html con el correo 'admin@urbanpark.com' y la contraseña 'Admin1234'.</b>");
+        
+      } catch (e) {
+        log("❌ Error: " + e.message + " (Si el correo ya está en uso, ignora este error o elimina el usuario viejo en Firebase Console)");
+      }
+    }
+
+    inicializar();
+  </script>
+</body>
+</html>

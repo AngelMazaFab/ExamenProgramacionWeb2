@@ -1,0 +1,29 @@
+<nav class="site-nav" aria-label="Navegación principal">
+  <ul>
+    <li><a href="/dashboard.html"    data-page="dashboard.html">Dashboard</a></li>
+    <li><a href="/buscador.html"     data-page="buscador.html">Buscador</a></li>
+    <li><a href="/vehiculos.html"    data-page="vehiculos.html">Vehículos</a></li>
+    <li><a href="/espacios.html"     data-page="espacios.html">Espacios</a></li>
+    <li><a href="/tickets.html"      data-page="tickets.html">Tickets</a></li>
+    <li><a href="/operadores.html"   data-page="operadores.html">Operadores</a></li>
+    <li><a href="/reportes.html"     data-page="reportes.html">Reportes</a></li>
+    <li><a href="/carga-masiva.html" data-page="carga-masiva.html">Carga CSV</a></li>
+    <li><a href="/perfil.html"       data-page="perfil.html">Mi Perfil</a></li>
+    <li><a href="/cierre-caja.html"  data-page="cierre-caja.html">Cierre de Caja</a></li>
+    <li><a href="/auditoria.html"    data-page="auditoria.html">Auditoría</a></li>
+    <li><a href="/comprobante.html"  data-page="comprobante.html">Comprobante</a></li>
+    <li><a href="/idioma-voz.html"   data-page="idioma-voz.html">Idioma / Voz</a></li>
+    <li><a href="/sorpresa.html"     data-page="sorpresa.html">Sorpresa</a></li>
+    <li><a href="#" id="btn-logout">Cerrar Sesión</a></li>
+  </ul>
+</nav>
+
+<script type="module">
+  import { auth } from "/js/firebase-config.js";
+  import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  document.getElementById("btn-logout")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await signOut(auth);
+    location.href = "/login.html";
+  });
+</script>

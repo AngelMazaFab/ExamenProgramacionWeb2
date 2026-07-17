@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Carga Masiva CSV</title>
+  <meta name="description" content="Carga masiva de tarifas y espacios mediante archivos CSV en el sistema SIGEP.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 9: CARGA MASIVA DE TARIFAS Y ESPACIOS (CSV) -->
+    <section id="pagina-carga-masiva" class="bay">
+      <span class="bay-tag">P-09</span>
+      <h2>Carga Masiva de Tarifas y Espacios</h2>
+
+      <div id="msg-carga"></div>
+
+      <form id="form-carga-csv" action="#" method="post" enctype="multipart/form-data" novalidate>
+        <label for="archivo_csv">Archivo CSV</label>
+        <input type="file" id="archivo_csv" name="archivo_csv" accept=".csv" required>
+
+        <fieldset>
+          <legend>Tipo de Carga</legend>
+          <label>
+            <input type="radio" name="tipo_carga" id="tipo-tarifas" value="tarifas" checked>
+            Actualización de Tarifas
+          </label>
+          <label>
+            <input type="radio" name="tipo_carga" id="tipo-espacios" value="espacios">
+            Creación Masiva de Espacios
+          </label>
+        </fieldset>
+
+        <div id="campos-rango">
+          <label for="rango_codigo_inicio">Rango de códigos (inicio)</label>
+          <input type="text" id="rango_codigo_inicio" name="rango_codigo_inicio" placeholder="Ej. C-01">
+
+          <label for="rango_codigo_fin">Rango de códigos (fin)</label>
+          <input type="text" id="rango_codigo_fin" name="rango_codigo_fin" placeholder="Ej. C-50">
+        </div>
+
+        <button type="submit" id="btn-procesar-csv">Procesar Archivo</button>
+      </form>
+
+      <article>
+        <h3>Plantillas CSV de ejemplo</h3>
+        <p style="font-size:0.85rem">
+          Descarga las plantillas para ver el formato requerido:
+        </p>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+          <button type="button" id="btn-plantilla-tarifas" class="btn">⬇ Plantilla Tarifas</button>
+          <button type="button" id="btn-plantilla-espacios" class="btn">⬇ Plantilla Espacios</button>
+        </div>
+      </article>
+
+      <article>
+        <h3>Resultado de la Carga</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Fila</th>
+              <th>Dato Procesado</th>
+              <th>Estado</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-resultado-carga">
+            <tr><td colspan="4">Sin resultados todavía.</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/carga-masiva.js"></script>
+</body>
+</html>

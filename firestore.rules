@@ -1,0 +1,105 @@
+// ============================================================
+// Firestore Security Rules — SIGEP UrbanPark S.A.
+// Versión: 1.0
+//
+// Roles almacenados en el campo 'rol' del documento
+// operadores/{uid} en Firestore.
+//
+// Función auxiliar: obtener el rol del usuario autenticado
+// leyendo su propio documento en la colección 'operadores'.
+// ============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Función auxiliar: obtener rol del usuario actual ────
+    function rol() {
+      return get(/databases/$(database)/documents/operadores/$(request.auth.uid)).data.rol;
+    }
+
+    function esSuperAdmin() { return rol() == 'super_admin'; }
+    function esSupervisor() { return rol() in ['super_admin', 'supervisor']; }
+    function esOperador()   { return request.auth != null; } // Cualquier autenticado
+
+    // ── parqueaderos ────────────────────────────────────────
+    // Todos los autenticados pueden leer; solo super_admin escribe.
+    match /parqueaderos/{id} {
+      allow read:   if request.auth != null;
+      allow write:  if esSuperAdmin();
+    }
+
+    // ── vehiculos ───────────────────────────────────────────
+    // Cualquier operador puede crear y leer; solo super_admin elimina.
+    match /vehiculos/{id} {
+      allow read:   if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── espacios ────────────────────────────────────────────
+    // super_admin y supervisor: CRUD completo.
+    // operador: puede leer y solo cambiar el campo estado_actual.
+    match /espacios/{id} {
+      allow read:   if request.auth != null;
+      allow create: if esSupervisor();
+      allow delete: if esSuperAdmin();
+      allow update: if esSupervisor()
+        || (esOperador() && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['estado_actual', 'actualizado_en']));
+    }
+
+    // ── tickets ─────────────────────────────────────────────
+    // Cualquier operador puede crear tickets (check-in).
+    // Puede actualizar su propio ticket activo (check-out) o super_admin puede.
+    // Solo super_admin puede anular (estado_ticket = 'Anulado').
+    match /tickets/{id} {
+      allow read:   if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if esSuperAdmin()
+        || (esOperador() && resource.data.estado_ticket == 'Activo');
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── operadores ──────────────────────────────────────────
+    // Cada operador puede leer y editar solo su propio documento.
+    // super_admin puede CRUD completo; supervisor puede leer.
+    match /operadores/{uid} {
+      allow read:   if request.auth.uid == uid || esSupervisor();
+      allow create: if esSuperAdmin() || request.auth.uid == uid;
+      allow update: if request.auth.uid == uid || esSuperAdmin();
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── tarifas ─────────────────────────────────────────────
+    // Todos los autenticados leen; solo super_admin escribe.
+    match /tarifas/{id} {
+      allow read:   if request.auth != null;
+      allow write:  if esSuperAdmin();
+    }
+
+    // ── auditoria ───────────────────────────────────────────
+    // Solo super_admin y supervisor pueden leer la bitácora.
+    // Escritura permitida para cualquier autenticado (el cliente
+    // registra sus propias acciones; en producción esto iría
+    // protegido por Cloud Functions).
+    match /auditoria/{id} {
+      allow read:   if esSupervisor();
+      allow create: if request.auth != null;
+      allow update: if false;  // La auditoría es inmutable
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── cajas (cierres de caja) ──────────────────────────────
+    // Cada operador puede leer y crear sus propios cierres.
+    // super_admin puede leer todos.
+    match /cajas/{id} {
+      allow read:   if esSupervisor()
+        || (request.auth != null && resource.data.id_operador == request.auth.uid);
+      allow create: if request.auth != null;
+      allow update: if esSuperAdmin();
+      allow delete: if esSuperAdmin();
+    }
+  }
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Iniciar Sesión</title>
+  <meta name="description" content="Acceso al Sistema Inteligente de Gestión de Estacionamientos y Parqueaderos de UrbanPark S.A.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+
+  <header class="site-header">
+    <img src="/assets/logo.svg" alt="Logo UrbanPark S.A. - SIGEP" width="150">
+    <h1>SIGEP - Sistema Inteligente de Gestión de Estacionamientos y Parqueaderos</h1>
+    <p>UrbanPark S.A. // Centro de la ciudad</p>
+  </header>
+
+  <main>
+    <!-- PÁGINA 1: LOGIN / AUTENTICACIÓN MULTI-ROL -->
+    <section id="pagina-login" class="bay">
+      <span class="bay-tag">P-01</span>
+      <h2>Iniciar Sesión</h2>
+
+      <div id="msg-login"></div>
+
+      <form id="form-login" action="#" method="post" novalidate>
+        <fieldset>
+          <legend>Credenciales de Acceso</legend>
+
+          <label for="correo">Correo electrónico</label>
+          <input type="email" id="correo" name="correo" required autocomplete="email">
+
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" required autocomplete="current-password">
+
+          <button type="submit" id="btn-login">Ingresar</button>
+        </fieldset>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 UrbanPark S.A. — SIGEP. Todos los derechos reservados.</p>
+  </footer>
+
+  <script type="module" src="/js/views/login.js"></script>
+</body>
+</html>

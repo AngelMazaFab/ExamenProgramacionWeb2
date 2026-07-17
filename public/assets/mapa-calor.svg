@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="100%" height="100%">
+    <!-- Fondo del área de estacionamiento -->
+    <rect width="600" height="300" fill="#2C3E50" rx="8"/>
+    
+    <!-- Líneas de calle/carril central -->
+    <line x1="0" y1="150" x2="600" y2="150" stroke="#F8F9FA" stroke-width="4" stroke-dasharray="20, 15"/>
+
+    <!-- Fila Superior (Zonas Verdes / Bajas) -->
+    <g font-family="'IBM Plex Mono', monospace" font-size="16" font-weight="bold" fill="white" text-anchor="middle">
+        <!-- Disponibles -->
+        <rect x="30" y="30" width="80" height="90" fill="#2ECC71" rx="6" opacity="0.9"/>
+        <text x="70" y="80">A-01</text>
+        
+        <rect x="130" y="30" width="80" height="90" fill="#2ECC71" rx="6" opacity="0.9"/>
+        <text x="170" y="80">A-02</text>
+        
+        <!-- Ocupados -->
+        <rect x="230" y="30" width="80" height="90" fill="#E74C3C" rx="6" opacity="0.9"/>
+        <text x="270" y="80">A-03</text>
+        
+        <rect x="330" y="30" width="80" height="90" fill="#E74C3C" rx="6" opacity="0.9"/>
+        <text x="370" y="80">A-04</text>
+        
+        <!-- Disponibles -->
+        <rect x="430" y="30" width="80" height="90" fill="#2ECC71" rx="6" opacity="0.9"/>
+        <text x="470" y="80">A-05</text>
+        
+        <rect x="530" y="30" width="80" height="90" fill="#2ECC71" rx="6" opacity="0.9"/>
+        <text x="570" y="80">A-06</text>
+    </g>
+
+    <!-- Fila Inferior (Zonas Rojas / Alta demanda) -->
+    <g font-family="'IBM Plex Mono', monospace" font-size="16" font-weight="bold" fill="white" text-anchor="middle">
+        <!-- Ocupados (Mapa de calor intenso) -->
+        <rect x="30" y="180" width="80" height="90" fill="#E74C3C" rx="6" opacity="0.9"/>
+        <text x="70" y="230">B-01</text>
+        
+        <rect x="130" y="180" width="80" height="90" fill="#E74C3C" rx="6" opacity="0.9"/>
+        <text x="170" y="230">B-02</text>
+        
+        <rect x="230" y="180" width="80" height="90" fill="#E74C3C" rx="6" opacity="0.9"/>
+        <text x="270" y="230">B-03</text>
+        
+        <rect x="330" y="180" width="80" height="90" fill="#E74C3C" rx="6" opacity="0.9"/>
+        <text x="370" y="230">B-04</text>
+        
+        <rect x="430" y="180" width="80" height="90" fill="#E74C3C" rx="6" opacity="0.9"/>
+        <text x="470" y="230">B-05</text>
+        
+        <!-- Un espacio libre -->
+        <rect x="530" y="180" width="80" height="90" fill="#2ECC71" rx="6" opacity="0.9"/>
+        <text x="570" y="230">B-06</text>
+    </g>
+</svg>

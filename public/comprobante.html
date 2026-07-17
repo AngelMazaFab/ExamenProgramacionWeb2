@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Comprobante de Pago</title>
+  <meta name="description" content="Comprobante de pago de ticket con código QR de verificación en SIGEP.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 13: COMPROBANTE PDF DE PAGO -->
+    <section id="pagina-comprobante" class="bay">
+      <span class="bay-tag">P-13</span>
+      <h2>Comprobante de Pago</h2>
+
+      <!-- Selector de ticket -->
+      <form id="form-buscar-ticket" style="flex-direction:row;gap:0.75rem;align-items:flex-end;margin-bottom:1.25rem;max-width:100%">
+        <div style="display:flex;flex-direction:column;gap:0.25rem;flex:1">
+          <label for="ticket-id-busqueda">ID de Ticket o Placa</label>
+          <input type="text" id="ticket-id-busqueda" placeholder="Ej. ABC-1234 o ID del ticket" autocomplete="off">
+        </div>
+        <button type="submit">Buscar</button>
+      </form>
+
+      <div id="comprobante-contenido" style="display:none">
+        <address id="comp-sede">UrbanPark S.A. — Sede Centro 1</address>
+        <dl>
+          <dt>Ticket N°</dt>   <dd id="comp-ticket-id">—</dd>
+          <dt>Cliente</dt>     <dd id="comp-cliente">—</dd>
+          <dt>Placa</dt>       <dd id="comp-placa">—</dd>
+          <dt>Espacio</dt>     <dd id="comp-espacio">—</dd>
+          <dt>Ingreso</dt>     <dd id="comp-ingreso">—</dd>
+          <dt>Salida</dt>      <dd id="comp-salida">—</dd>
+          <dt>Tiempo</dt>      <dd id="comp-tiempo">—</dd>
+          <dt>Tarifa</dt>      <dd id="comp-tarifa">—</dd>
+          <dt>Total pagado</dt><dd id="comp-total">—</dd>
+          <dt>Método pago</dt> <dd id="comp-metodo">—</dd>
+          <dt>Estado</dt>      <dd id="comp-estado">—</dd>
+        </dl>
+
+        <figure style="max-width:160px;margin-top:1rem">
+          <canvas id="qr-canvas" width="140" height="140" aria-label="Código QR de verificación única del comprobante"></canvas>
+          <figcaption>Código QR de verificación</figcaption>
+        </figure>
+
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1rem">
+          <button type="button" id="btn-descargar-pdf" class="btn">⬇ Descargar PDF</button>
+          <button type="button" id="btn-anular-ticket" class="btn btn-danger">✕ Anular Ticket</button>
+        </div>
+      </div>
+
+      <div id="msg-comprobante"></div>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <!-- QR: qrcode.js -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/comprobante.js"></script>
+</body>
+</html>

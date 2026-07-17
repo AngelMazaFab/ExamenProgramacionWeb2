@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Gestión de Espacios</title>
+  <meta name="description" content="CRUD y mapa interactivo de espacios de estacionamiento en SIGEP.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 5: CRUD ESPACIOS -->
+    <section id="pagina-espacios" class="bay">
+      <span class="bay-tag">P-05</span>
+      <h2>Gestión de Espacios de Estacionamiento</h2>
+
+      <article>
+        <h3>Registrar / Editar Espacio</h3>
+        <div id="msg-espacios"></div>
+        <form id="form-espacio" action="#" method="post" novalidate>
+          <input type="hidden" id="id_espacio" name="id_espacio">
+
+          <label for="codigo_identificador">Código identificador</label>
+          <input type="text" id="codigo_identificador" name="codigo_identificador" placeholder="Ej. A-12" required style="text-transform:uppercase">
+
+          <label for="id_parqueadero">Sede / Parqueadero</label>
+          <select id="id_parqueadero" name="id_parqueadero">
+            <!-- Poblado dinámicamente desde Firestore -->
+          </select>
+
+          <label for="tipo_espacio">Tipo de espacio</label>
+          <select id="tipo_espacio" name="tipo_espacio">
+            <option value="estandar">Estándar</option>
+            <option value="discapacitados">Discapacitados</option>
+            <option value="electrico">Eléctrico</option>
+            <option value="motos">Motos</option>
+          </select>
+
+          <label for="piso_nivel">Piso / Nivel</label>
+          <input type="text" id="piso_nivel" name="piso_nivel" placeholder="Ej. 1">
+
+          <label for="estado_actual">Estado actual</label>
+          <select id="estado_actual" name="estado_actual">
+            <option value="disponible">Disponible</option>
+            <option value="ocupado">Ocupado</option>
+            <option value="mantenimiento">Mantenimiento</option>
+          </select>
+
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+            <button type="submit" id="btn-guardar-espacio">Guardar Espacio</button>
+            <button type="button" id="btn-cancelar-espacio" style="display:none">Cancelar Edición</button>
+          </div>
+        </form>
+      </article>
+
+      <article>
+        <h3>Mapa Interactivo de Espacios</h3>
+        <div id="filtro-piso" style="margin-bottom:0.75rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+          <label for="sel-piso" style="align-self:center">Piso:</label>
+          <select id="sel-piso" style="width:auto">
+            <option value="todos">Todos</option>
+          </select>
+          <label for="sel-sede-mapa" style="align-self:center">Sede:</label>
+          <select id="sel-sede-mapa" style="width:auto">
+            <option value="todos">Todas</option>
+          </select>
+        </div>
+        <div class="mapa-espacios" id="mapa-espacios" aria-label="Mapa visual de espacios de estacionamiento">
+          <p>Cargando mapa...</p>
+        </div>
+        <p style="font-size:0.8rem;font-family:var(--font-mono);margin-top:0.5rem">
+          <span style="color:var(--signal-green)">■</span> Disponible &nbsp;
+          <span style="color:var(--signal-red)">■</span> Ocupado &nbsp;
+          <span style="color:var(--steel)">■</span> Mantenimiento
+        </p>
+      </article>
+
+      <article>
+        <h3>Listado de Espacios</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Sede</th>
+              <th>Tipo</th>
+              <th>Piso</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-espacios">
+            <tr><td colspan="6">Cargando espacios...</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/espacios.js"></script>
+</body>
+</html>

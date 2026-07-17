@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Traducción y Texto a Voz</title>
+  <meta name="description" content="Selector de idioma y reproducción de reglamento por voz en el sistema SIGEP.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 14: TRADUCCIÓN Y TEXTO A VOZ -->
+    <section id="pagina-idioma-voz" class="bay">
+      <span class="bay-tag">P-14</span>
+      <h2>Traducción y Texto a Voz (Reglamentos)</h2>
+
+      <article>
+        <h3>Selector de Idioma</h3>
+        <form id="form-idioma" action="#" method="post" novalidate>
+          <label for="idioma">Idioma de visualización</label>
+          <select id="idioma" name="idioma">
+            <option value="es">🇪🇸 Español</option>
+            <option value="en">🇺🇸 Inglés (English)</option>
+            <option value="fr">🇫🇷 Francés (Français)</option>
+            <option value="de">🇩🇪 Alemán (Deutsch)</option>
+          </select>
+          <button type="submit" id="btn-aplicar-idioma">Aplicar Idioma</button>
+        </form>
+      </article>
+
+      <article>
+        <h3 id="titulo-reglamento">Reglamento y Tarifas Vigentes</h3>
+        <div id="texto-reglamento" style="line-height:1.7;font-size:0.95rem">
+          <!-- El texto se carga dinámicamente según el idioma -->
+        </div>
+
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1rem">
+          <button type="button" id="btn-escuchar" class="btn">🔊 Escuchar Condiciones</button>
+          <button type="button" id="btn-pausar" class="btn" style="display:none">⏸ Pausar</button>
+          <button type="button" id="btn-detener" class="btn" style="display:none">⏹ Detener</button>
+        </div>
+
+        <div id="estado-voz" style="margin-top:0.75rem;font-family:var(--font-mono);font-size:0.8rem;color:var(--steel)"></div>
+      </article>
+
+      <article>
+        <h3>Traducción Personalizada</h3>
+        <p style="font-size:0.85rem;color:var(--steel)">
+          Escribe cualquier texto y escúchalo en el idioma seleccionado.
+        </p>
+        <form id="form-traduccion" action="#" method="post" novalidate style="max-width:100%">
+          <label for="texto-traducir">Texto a traducir / leer</label>
+          <textarea id="texto-traducir" name="texto-traducir" rows="4"
+                    style="font-family:var(--font-body);resize:vertical"
+                    placeholder="Escribe aquí el texto que deseas escuchar..."></textarea>
+
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+            <button type="submit" id="btn-leer-texto">🔊 Leer Texto</button>
+          </div>
+        </form>
+      </article>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/idioma-voz.js"></script>
+</body>
+</html>

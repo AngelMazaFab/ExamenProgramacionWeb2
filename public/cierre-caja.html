@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Cierre de Caja</title>
+  <meta name="description" content="Cierre de caja y generación de PDF de arqueo por turno en el sistema SIGEP.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 11: CIERRE DE CAJA -->
+    <section id="pagina-cierre-caja" class="bay">
+      <span class="bay-tag">P-11</span>
+      <h2>Cierre de Caja</h2>
+
+      <div id="msg-caja"></div>
+
+      <article>
+        <h3>Resumen del Turno Actual</h3>
+        <div class="stat-grid" style="margin-bottom:1rem">
+          <div class="stat-card">
+            <div class="stat-card__label">Tickets cobrados</div>
+            <div class="stat-card__value" id="caja-total-tickets">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label">Total sistema ($)</div>
+            <div class="stat-card__value" id="caja-total-sistema">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label">Turno</div>
+            <div class="stat-card__value" id="caja-turno">—</div>
+          </div>
+        </div>
+      </article>
+
+      <article>
+        <h3>Arqueo de Caja</h3>
+        <form id="form-cierre-caja" action="#" method="post" novalidate>
+          <label for="total_tickets_turno">Total cobrado por el sistema ($)</label>
+          <input type="number" id="total_tickets_turno" name="total_tickets_turno" step="0.01" readonly>
+
+          <label for="monto_fisico_efectivo">Monto físico en efectivo contado ($)</label>
+          <input type="number" id="monto_fisico_efectivo" name="monto_fisico_efectivo" step="0.01" min="0" required placeholder="0.00">
+
+          <label for="diferencia_caja">Diferencia calculada ($)</label>
+          <input type="number" id="diferencia_caja" name="diferencia_caja" step="0.01" readonly>
+
+          <div id="estado-diferencia"></div>
+
+          <button type="submit" id="btn-cerrar-caja">Cerrar Caja y Generar PDF de Arqueo</button>
+        </form>
+      </article>
+
+      <article>
+        <h3>Historial de Cierres</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Operador</th>
+              <th>Turno</th>
+              <th>Total Sistema</th>
+              <th>Total Físico</th>
+              <th>Diferencia</th>
+              <th>PDF</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-cierres">
+            <tr><td colspan="7">Cargando historial...</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <!-- jsPDF para generar PDF en el navegador -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/cierre-caja.js"></script>
+</body>
+</html>

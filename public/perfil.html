@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Mi Perfil</title>
+  <meta name="description" content="Edición de perfil y cambio de contraseña para operadores de SIGEP.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 10: PERFIL DE USUARIO -->
+    <section id="pagina-perfil" class="bay">
+      <span class="bay-tag">P-10</span>
+      <h2>Mi Perfil</h2>
+
+      <div id="msg-perfil"></div>
+
+      <article>
+        <h3>Foto y Datos del Perfil</h3>
+        <form id="form-perfil" action="#" method="post" enctype="multipart/form-data" novalidate>
+          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem">
+            <img id="foto-perfil-preview" src="/assets/logo.svg" alt="Foto de perfil actual"
+                 width="90" height="90"
+                 style="border-radius:50%;object-fit:cover;border:3px solid var(--paint-yellow)">
+            <div>
+              <p id="nombre-perfil" style="font-family:var(--font-display);font-size:1.2rem;margin:0"></p>
+              <p id="rol-perfil" style="font-family:var(--font-mono);font-size:0.8rem;color:var(--steel);margin:0"></p>
+            </div>
+          </div>
+
+          <label for="foto_nueva">Cambiar foto de perfil</label>
+          <input type="file" id="foto_nueva" name="foto_nueva" accept="image/*">
+
+          <button type="submit" id="btn-actualizar-foto">Actualizar Foto</button>
+        </form>
+      </article>
+
+      <article>
+        <h3>Cambiar Contraseña</h3>
+        <form id="form-password" action="#" method="post" novalidate>
+          <label for="password_nueva">Nueva contraseña</label>
+          <input type="password" id="password_nueva" name="password_nueva" minlength="6" placeholder="Mínimo 6 caracteres">
+
+          <label for="password_confirmar">Confirmar nueva contraseña</label>
+          <input type="password" id="password_confirmar" name="password_confirmar" minlength="6">
+
+          <button type="submit" id="btn-cambiar-password">Cambiar Contraseña</button>
+        </form>
+      </article>
+
+      <article>
+        <h3>Información de la Cuenta</h3>
+        <dl id="info-cuenta">
+          <dt>Correo</dt><dd id="info-correo">—</dd>
+          <dt>Turno</dt><dd id="info-turno">—</dd>
+          <dt>Cargo</dt><dd id="info-cargo">—</dd>
+          <dt>Cédula</dt><dd id="info-cedula">—</dd>
+          <dt>Fecha de registro</dt><dd id="info-fecha">—</dd>
+        </dl>
+      </article>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/perfil.js"></script>
+</body>
+</html>

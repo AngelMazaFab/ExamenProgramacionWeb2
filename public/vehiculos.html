@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Gestión de Vehículos</title>
+  <meta name="description" content="CRUD completo de vehículos registrados en el sistema SIGEP de UrbanPark S.A.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 4: CRUD VEHÍCULOS -->
+    <section id="pagina-vehiculos" class="bay">
+      <span class="bay-tag">P-04</span>
+      <h2>Gestión de Vehículos</h2>
+
+      <article>
+        <h3>Registrar / Editar Vehículo</h3>
+        <div id="msg-vehiculos"></div>
+        <form id="form-vehiculo" action="#" method="post" enctype="multipart/form-data" novalidate>
+          <input type="hidden" id="id_vehiculo" name="id_vehiculo">
+
+          <label for="placa">Placa</label>
+          <input type="text" id="placa" name="placa" required style="text-transform:uppercase" placeholder="Ej. ABC-1234">
+
+          <label for="marca">Marca</label>
+          <input type="text" id="marca" name="marca">
+
+          <label for="modelo">Modelo</label>
+          <input type="text" id="modelo" name="modelo">
+
+          <label for="color">Color</label>
+          <input type="text" id="color" name="color">
+
+          <label for="nombre_propietario">Nombre del propietario</label>
+          <input type="text" id="nombre_propietario" name="nombre_propietario">
+
+          <label for="telefono_contacto">Teléfono de contacto</label>
+          <input type="tel" id="telefono_contacto" name="telefono_contacto">
+
+          <label for="correo_opcional">Correo (opcional)</label>
+          <input type="email" id="correo_opcional" name="correo_opcional">
+
+          <label for="foto_propietario">Foto del propietario</label>
+          <input type="file" id="foto_propietario" name="foto_propietario" accept="image/*">
+
+          <label for="foto_placa">Foto de la placa</label>
+          <input type="file" id="foto_placa" name="foto_placa" accept="image/*">
+
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+            <button type="submit" id="btn-guardar-vehiculo">Guardar Vehículo</button>
+            <button type="button" id="btn-cancelar-vehiculo" style="display:none">Cancelar Edición</button>
+          </div>
+        </form>
+      </article>
+
+      <article>
+        <h3>Listado de Vehículos</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Color</th>
+              <th>Propietario</th>
+              <th>Foto Prop.</th>
+              <th>Foto Placa</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-vehiculos">
+            <tr><td colspan="8">Cargando vehículos...</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/vehiculos.js"></script>
+</body>
+</html>

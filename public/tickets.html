@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Gestión de Tickets</title>
+  <meta name="description" content="Check-in y check-out de vehículos, registro de pagos y listado de tickets en SIGEP.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 6: CRUD TICKETS (CHECK-IN / CHECK-OUT) -->
+    <section id="pagina-tickets" class="bay">
+      <span class="bay-tag">P-06</span>
+      <h2>Gestión de Tickets — Check-in / Check-out</h2>
+
+      <article>
+        <h3>Registrar Ingreso (Check-in)</h3>
+        <div id="msg-checkin"></div>
+        <form id="form-checkin" action="#" method="post" novalidate>
+          <label for="placa_ingreso">Placa del vehículo</label>
+          <input type="text" id="placa_ingreso" name="placa_ingreso" placeholder="Ej. ABC-1234" required style="text-transform:uppercase" autocomplete="off">
+          <small id="info-vehiculo" style="font-family:var(--font-mono);font-size:0.8rem;color:var(--steel)"></small>
+
+          <label for="id_espacio_asignado">Espacio disponible</label>
+          <select id="id_espacio_asignado" name="id_espacio_asignado" required>
+            <option value="">— Seleccionar espacio —</option>
+          </select>
+
+          <label for="fecha_hora_ingreso">Fecha y hora de ingreso</label>
+          <input type="datetime-local" id="fecha_hora_ingreso" name="fecha_hora_ingreso" required>
+
+          <button type="submit" id="btn-checkin">Registrar Ingreso</button>
+        </form>
+      </article>
+
+      <article>
+        <h3>Registrar Salida (Check-out)</h3>
+        <div id="msg-checkout"></div>
+        <form id="form-checkout" action="#" method="post" enctype="multipart/form-data" novalidate>
+          <label for="id_ticket_salida">Ticket activo (placa)</label>
+          <select id="id_ticket_salida" name="id_ticket_salida" required>
+            <option value="">— Seleccionar ticket activo —</option>
+          </select>
+
+          <label for="fecha_hora_salida">Fecha y hora de salida</label>
+          <input type="datetime-local" id="fecha_hora_salida" name="fecha_hora_salida" required>
+
+          <label for="tiempo_total">Tiempo total (segundos)</label>
+          <input type="number" id="tiempo_total" name="tiempo_total" readonly placeholder="Calculado automáticamente">
+
+          <label for="tarifa_aplicada">Tarifa aplicada ($/hora)</label>
+          <input type="number" id="tarifa_aplicada" name="tarifa_aplicada" step="0.01" readonly placeholder="Según tarifa vigente">
+
+          <label for="monto_total_pagado">Monto total a cobrar ($)</label>
+          <input type="number" id="monto_total_pagado" name="monto_total_pagado" step="0.01" readonly placeholder="Calculado automáticamente">
+
+          <label for="metodo_pago">Método de pago</label>
+          <select id="metodo_pago" name="metodo_pago" required>
+            <option value="efectivo">Efectivo</option>
+            <option value="tarjeta">Tarjeta</option>
+            <option value="app">App</option>
+          </select>
+
+          <label for="foto_evidencia_salida">Foto de evidencia de salida</label>
+          <input type="file" id="foto_evidencia_salida" name="foto_evidencia_salida" accept="image/*">
+
+          <button type="submit" id="btn-checkout">Registrar Salida y Cobrar</button>
+        </form>
+      </article>
+
+      <article>
+        <h3>Listado de Tickets</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Ticket ID</th>
+              <th>Placa</th>
+              <th>Espacio</th>
+              <th>Ingreso</th>
+              <th>Salida</th>
+              <th>Monto</th>
+              <th>Pago</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-tickets">
+            <tr><td colspan="9">Cargando tickets...</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/tickets.js"></script>
+</body>
+</html>

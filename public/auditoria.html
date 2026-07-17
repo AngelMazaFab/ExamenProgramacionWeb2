@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Bitácora de Auditoría</title>
+  <meta name="description" content="Registro de auditoría de acciones sensibles en el sistema SIGEP de UrbanPark S.A.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 12: BITÁCORA DE AUDITORÍA -->
+    <section id="pagina-auditoria" class="bay">
+      <span class="bay-tag">P-12</span>
+      <h2>Bitácora de Auditoría</h2>
+
+      <form id="form-filtro-auditoria" style="flex-direction:row;flex-wrap:wrap;align-items:flex-end;gap:0.75rem;max-width:100%">
+        <div style="display:flex;flex-direction:column;gap:0.25rem">
+          <label for="filtro-accion-audit">Acción</label>
+          <select id="filtro-accion-audit" style="width:auto">
+            <option value="todas">Todas</option>
+            <option value="apertura_caja">Apertura de Caja</option>
+            <option value="cierre_caja">Cierre de Caja</option>
+            <option value="anulacion_ticket">Anulación de Ticket</option>
+            <option value="checkin">Check-in</option>
+            <option value="checkout">Check-out</option>
+            <option value="cambio_estado_espacio">Cambio Estado Espacio</option>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.25rem">
+          <label for="filtro-fecha-audit">Fecha (desde)</label>
+          <input type="date" id="filtro-fecha-audit" style="width:auto">
+        </div>
+        <button type="submit">Filtrar</button>
+      </form>
+
+      <table style="margin-top:1.25rem">
+        <thead>
+          <tr>
+            <th>Fecha y Hora</th>
+            <th>Operador</th>
+            <th>Acción</th>
+            <th>Detalle</th>
+            <th>Dirección IP</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-auditoria">
+          <tr><td colspan="5">Cargando bitácora...</td></tr>
+        </tbody>
+      </table>
+
+      <button type="button" id="btn-exportar-auditoria" class="btn" style="margin-top:1rem">
+        ⬇ Exportar Auditoría a Excel
+      </button>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/auditoria.js"></script>
+</body>
+</html>

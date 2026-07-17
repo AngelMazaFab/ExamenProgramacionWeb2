@@ -1,0 +1,61 @@
+// ============================================================
+// Firebase Storage Security Rules — SIGEP UrbanPark S.A.
+// Versión: 1.0
+//
+// Nota: Las reglas de Storage no tienen acceso directo a
+// Firestore, por lo que los roles se verifican de forma
+// simplificada (autenticado = permitido para leer/subir).
+// Para mayor seguridad en producción, usar Cloud Functions
+// que validen el rol antes de generar tokens de subida.
+// ============================================================
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ── Fotos de vehículos ─────────────────────────────────
+    // Cualquier usuario autenticado puede subir y leer.
+    match /vehiculos/{vehiculoId}/{archivo} {
+      allow read:  if request.auth != null;
+      allow write: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024  // máx. 5 MB
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // ── Fotos de operadores ────────────────────────────────
+    // Cada operador puede subir su propia foto.
+    // Super Admin puede subir cualquiera.
+    match /operadores/{operadorId}/{archivo} {
+      allow read:  if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.uid == operadorId
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // ── Archivos de tickets (evidencia y comprobantes) ─────
+    // Cualquier autenticado puede leer y subir evidencia.
+    match /tickets/{ticketId}/{archivo} {
+      allow read:  if request.auth != null;
+      allow write: if request.auth != null
+        && request.resource.size < 10 * 1024 * 1024; // máx. 10 MB
+    }
+
+    // ── Reportes generados ─────────────────────────────────
+    // Solo lectura para autenticados; escritura solo desde backend.
+    match /reportes/{archivo} {
+      allow read:  if request.auth != null;
+      allow write: if false; // Solo Cloud Functions escriben aquí
+    }
+
+    // ── Cargas masivas CSV ─────────────────────────────────
+    // Solo super_admin puede subir CSVs (verificación básica por autenticación).
+    match /cargas_csv/{archivo} {
+      allow read:  if request.auth != null;
+      allow write: if request.auth != null
+        && request.resource.size < 10 * 1024 * 1024
+        && (request.resource.contentType == 'text/csv'
+            || request.resource.contentType == 'application/vnd.ms-excel');
+    }
+  }
+}

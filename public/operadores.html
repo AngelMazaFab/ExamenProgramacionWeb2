@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Gestión de Operadores</title>
+  <meta name="description" content="Registro y administración de operadores y empleados en el sistema SIGEP.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <!-- PÁGINA 7: CRUD OPERADORES -->
+    <section id="pagina-operadores" class="bay">
+      <span class="bay-tag">P-07</span>
+      <h2>Gestión de Operadores</h2>
+
+      <article>
+        <h3>Registrar / Editar Operador</h3>
+        <div id="msg-operadores"></div>
+        <form id="form-operador" action="#" method="post" enctype="multipart/form-data" novalidate>
+          <input type="hidden" id="id_operador" name="id_operador">
+
+          <label for="nombres">Nombres</label>
+          <input type="text" id="nombres" name="nombres" required>
+
+          <label for="apellidos">Apellidos</label>
+          <input type="text" id="apellidos" name="apellidos" required>
+
+          <label for="cedula_identidad">Cédula de identidad</label>
+          <input type="text" id="cedula_identidad" name="cedula_identidad" required>
+
+          <label for="correo_operador">Correo electrónico</label>
+          <input type="email" id="correo_operador" name="correo_operador" required>
+
+          <label for="password_operador">Contraseña (solo al crear)</label>
+          <input type="password" id="password_operador" name="password_operador" placeholder="Mínimo 6 caracteres">
+
+          <label for="turno">Turno</label>
+          <select id="turno" name="turno">
+            <option value="matutino">Matutino</option>
+            <option value="vespertino">Vespertino</option>
+            <option value="nocturno">Nocturno</option>
+          </select>
+
+          <label for="cargo">Cargo</label>
+          <select id="cargo" name="cargo">
+            <option value="cajero">Cajero</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="vigilante">Vigilante</option>
+          </select>
+
+          <label for="rol">Rol en el sistema</label>
+          <select id="rol" name="rol">
+            <option value="operador">Operador / Cajero</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="super_admin">Super Administrador</option>
+          </select>
+
+          <label for="foto_perfil_operador">Foto de perfil</label>
+          <input type="file" id="foto_perfil_operador" name="foto_perfil_operador" accept="image/*">
+
+          <label for="huella_digital_hash">Huella digital (hash — integración futura)</label>
+          <input type="text" id="huella_digital_hash" name="huella_digital_hash" placeholder="Hash SHA-256">
+
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+            <button type="submit" id="btn-guardar-operador">Guardar Operador</button>
+            <button type="button" id="btn-cancelar-operador" style="display:none">Cancelar Edición</button>
+          </div>
+        </form>
+      </article>
+
+      <article>
+        <h3>Listado de Operadores</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>Nombres</th>
+              <th>Apellidos</th>
+              <th>Cédula</th>
+              <th>Turno</th>
+              <th>Cargo</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-operadores">
+            <tr><td colspan="8">Cargando operadores...</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <div id="layout-footer"></div>
+
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/views/operadores.js"></script>
+</body>
+</html>
