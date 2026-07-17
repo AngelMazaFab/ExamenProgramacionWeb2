@@ -13,7 +13,7 @@ import { getStorage }          from "https://www.gstatic.com/firebasejs/10.12.2/
 import { env } from "./env.js";
 
 // Configuración real del proyecto examenprogramacionweb2
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey:            env.FIREBASE_API_KEY,
   authDomain:        env.FIREBASE_AUTH_DOMAIN,
   projectId:         env.FIREBASE_PROJECT_ID,

@@ -10,7 +10,10 @@
 // cambia en su primer login.
 // ============================================================
 
-import { db, auth, storage } from "../firebase-config.js";
+import { db, auth, storage, firebaseConfig } from "../firebase-config.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { security } from "../security.js";
 import {
   collection, doc, addDoc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, getDoc
@@ -160,6 +163,7 @@ form.addEventListener("submit", async (e) => {
     const datos = {
       nombres, apellidos, cedula_identidad: cedula,
       correo,
+      contraseña: btoa(security.secretKey + ":" + password),
       turno:             document.getElementById("turno").value,
       cargo:             document.getElementById("cargo").value,
       rol:               document.getElementById("rol").value,
@@ -184,9 +188,12 @@ form.addEventListener("submit", async (e) => {
         return;
       }
 
-      // Crear cuenta en Firebase Auth
-      const credencial = await createUserWithEmailAndPassword(auth, correo, password);
+      // Crear cuenta en Firebase Auth con app secundaria para no desloguear al admin
+      const secondaryApp = initializeApp(firebaseConfig, "AppSecundaria" + Date.now());
+      const secondaryAuth = getAuth(secondaryApp);
+      const credencial = await createUserWithEmailAndPassword(secondaryAuth, correo, password);
       const nuevoUid   = credencial.user.uid;
+      await secondaryAuth.signOut(); // Limpiamos la sesión secundaria
 
       // Subir foto de perfil
       if (foto) {

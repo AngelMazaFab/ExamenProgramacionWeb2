@@ -16,6 +16,7 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 public/js/env.js
+public/js/security.js
 
 # ==============================
 # Archivos de Firebase
