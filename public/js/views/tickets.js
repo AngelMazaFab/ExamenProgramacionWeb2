@@ -4,14 +4,39 @@
 // tarifa vigente en Firestore, y actualiza estado de espacios.
 // ============================================================
 
-import { db, storage } from "../firebase-config.js";
+import { db } from "../firebase-config.js";
 import {
   collection, doc, addDoc, updateDoc,
   onSnapshot, query, where, getDocs, orderBy, limit, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import {
-  ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { inicializarCamara } from "../camera-widget.js";
+
+// ── Helper: convertir File a Base64 ──────────────────────────
+async function fileToBase64Ticket(file, maxSize = 400) {
+  if (!file || file.size === 0) return null;
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("No se pudo leer el archivo."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("El archivo no es una imagen válida."));
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let w = img.width, h = img.height;
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else       { w = Math.round(w * maxSize / h); h = maxSize; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Inicializar cámara para evidencia de salida ──────────────
+inicializarCamara("foto_evidencia_salida");
 
 // ── DOM ───────────────────────────────────────────────────────
 const formCheckin   = document.getElementById("form-checkin");
@@ -217,12 +242,10 @@ formCheckout.addEventListener("submit", async (e) => {
       monto = parseFloat((dias * (tarifa * 24)).toFixed(2));
     }
 
-    // Subir evidencia de salida si existe
+    // Convertir evidencia de salida a Base64 si existe
     let evidenciaUrl = null;
     if (fileEvidencia) {
-      const storageRef = ref(storage, `tickets/${ticketId}/evidencia_salida`);
-      await uploadBytes(storageRef, fileEvidencia);
-      evidenciaUrl = await getDownloadURL(storageRef);
+      evidenciaUrl = await fileToBase64Ticket(fileEvidencia);
     }
 
     // Actualizar el ticket

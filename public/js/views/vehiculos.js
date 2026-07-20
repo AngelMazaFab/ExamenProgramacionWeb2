@@ -4,14 +4,12 @@
 // Sube fotos del propietario y de la placa a Firebase Storage.
 // ============================================================
 
-import { db, storage } from "../firebase-config.js";
+import { db } from "../firebase-config.js";
 import {
   collection, doc, addDoc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, where, getDocs, limit
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import {
-  ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { inicializarCamara } from "../camera-widget.js";
 
 // ── Elementos del DOM ─────────────────────────────────────────
 const form          = document.getElementById("form-vehiculo");
@@ -38,16 +36,34 @@ function limpiarForm() {
 }
 
 /**
- * Sube un archivo a Firebase Storage y devuelve la URL de descarga.
- * @param {File}   file   - Archivo a subir
- * @param {string} path   - Ruta en Storage (ej. vehiculos/{id}/foto_placa)
+ * Convierte un File a Base64 (redimensionado a max 300px).
  */
-async function subirArchivo(file, path) {
+async function fileToBase64(file, maxSize = 300) {
   if (!file || file.size === 0) return null;
-  const storageRef = ref(storage, path);
-  await uploadBytes(storageRef, file);
-  return await getDownloadURL(storageRef);
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("No se pudo leer el archivo."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("El archivo no es una imagen válida."));
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let w = img.width, h = img.height;
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else       { w = Math.round(w * maxSize / h); h = maxSize; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
+
+// ── Inicializar cámaras para foto propietario y foto placa ───
+inicializarCamara("foto_propietario");
+inicializarCamara("foto_placa");
 
 // ── LEER: escucha en tiempo real la colección vehiculos ───────
 document.addEventListener("sigep:auth-ready", () => {
@@ -176,10 +192,10 @@ form.addEventListener("submit", async (e) => {
       const vehiculoRef = doc(db, "vehiculos", inputId.value);
 
       if (fileFotoProp) {
-        datos.foto_propietario_url = await subirArchivo(fileFotoProp, `vehiculos/${inputId.value}/foto_propietario`);
+        datos.foto_propietario_url = await fileToBase64(fileFotoProp);
       }
       if (fileFotoPlaca) {
-        datos.foto_placa_url = await subirArchivo(fileFotoPlaca, `vehiculos/${inputId.value}/foto_placa`);
+        datos.foto_placa_url = await fileToBase64(fileFotoPlaca);
       }
 
       await updateDoc(vehiculoRef, datos);
@@ -199,17 +215,15 @@ form.addEventListener("submit", async (e) => {
       datos.fecha_creacion   = new Date();
       datos.creado_por_uid   = window.SIGEP?.user?.uid || "";
 
-      const nuevoRef = await addDoc(collection(db, "vehiculos"), datos);
-
-      // Subir fotos ahora que tenemos el ID
+      // Convertir fotos a Base64 antes de guardar
       if (fileFotoProp) {
-        datos.foto_propietario_url = await subirArchivo(fileFotoProp, `vehiculos/${nuevoRef.id}/foto_propietario`);
-        await updateDoc(nuevoRef, { foto_propietario_url: datos.foto_propietario_url });
+        datos.foto_propietario_url = await fileToBase64(fileFotoProp);
       }
       if (fileFotoPlaca) {
-        datos.foto_placa_url = await subirArchivo(fileFotoPlaca, `vehiculos/${nuevoRef.id}/foto_placa`);
-        await updateDoc(nuevoRef, { foto_placa_url: datos.foto_placa_url });
+        datos.foto_placa_url = await fileToBase64(fileFotoPlaca);
       }
+
+      await addDoc(collection(db, "vehiculos"), datos);
 
       mostrarMsg("success", `Vehículo ${placa} registrado con éxito.`);
     }

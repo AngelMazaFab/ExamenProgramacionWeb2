@@ -1,5 +1,5 @@
 import { db } from "../firebase-config.js";
-import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, onSnapshot, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const tabla = document.getElementById("tabla-encuestas");
 
@@ -10,7 +10,19 @@ function segundosATexto(seg) {
   return `${h}h ${m}min`;
 }
 
-document.addEventListener("sigep:auth-ready", () => {
+document.addEventListener("sigep:auth-ready", async () => {
+  // Construir diccionario de operadores para mostrar el nombre
+  let operadoresMap = {};
+  try {
+    const opSnap = await getDocs(collection(db, "operadores"));
+    opSnap.forEach(doc => {
+      const d = doc.data();
+      operadoresMap[doc.id] = `${d.nombres || ""} ${d.apellidos || ""}`.trim() || doc.id.slice(0, 8);
+    });
+  } catch (err) {
+    console.error("Error al cargar operadores:", err);
+  }
+
   const q = query(collection(db, "encuestas"), orderBy("fecha_encuesta", "desc"));
   
   onSnapshot(q, (snap) => {
@@ -22,6 +34,8 @@ document.addEventListener("sigep:auth-ready", () => {
     tabla.innerHTML = snap.docs.map(d => {
       const e = d.data();
       let estrellas = "⭐".repeat(e.calificacion || 0);
+      const nombreOperador = operadoresMap[e.id_operador] || (e.id_operador ? e.id_operador.slice(0, 8) + "…" : "—");
+      
       return `
         <tr>
           <td>${estrellas} (${e.calificacion}/5)</td>
@@ -29,7 +43,7 @@ document.addEventListener("sigep:auth-ready", () => {
           <td>${e.placa_vehiculo || "—"}</td>
           <td>${e.codigo_espacio || "—"}</td>
           <td>${segundosATexto(e.tiempo_total_segundos)}</td>
-          <td title="${e.id_operador || ''}">${(e.id_operador || "—").slice(0, 8)}…</td>
+          <td title="${e.id_operador || ''}">${nombreOperador}</td>
         </tr>
       `;
     }).join("");

@@ -204,6 +204,21 @@ btnDescargar.addEventListener("click", () => {
     pdf.setTextColor(0, 86, 210);
     const surveyUrl = `${location.origin}/encuesta.html?ticket=${ticketIdActual}`;
     pdf.text(surveyUrl, 10, y);
+    y += 10;
+  }
+
+  // Si existe una foto de evidencia (en formato Base64)
+  if (ticketActual.evidencia_salida_url && ticketActual.evidencia_salida_url.startsWith("data:image/")) {
+    pdf.setTextColor(28, 30, 34);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("FOTO DE EVIDENCIA:", 10, y);
+    y += 3;
+    try {
+      // Ajustar dimensiones (ej. 100x75 mm)
+      pdf.addImage(ticketActual.evidencia_salida_url, "JPEG", 10, y, 100, 75);
+    } catch (err) {
+      console.warn("No se pudo agregar la foto al PDF:", err);
+    }
   }
 
   pdf.save(`Comprobante_${ticketActual.placa_vehiculo}_${new Date().toISOString().slice(0,10)}.pdf`);

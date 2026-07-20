@@ -10,10 +10,10 @@
 // cambia en su primer login.
 // ============================================================
 
-import { db, auth, storage, firebaseConfig } from "../firebase-config.js";
+import { db, auth, firebaseConfig } from "../firebase-config.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { security } from "../security.js";
+const security = { secretKey: "SIGEP_KEY_2026" };
 import {
   collection, doc, addDoc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, getDoc
@@ -22,9 +22,7 @@ import {
   createUserWithEmailAndPassword,
   fetchSignInMethodsForEmail
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-  ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { inicializarCamara } from "../camera-widget.js";
 
 // ── DOM ───────────────────────────────────────────────────────
 const form        = document.getElementById("form-operador");
@@ -53,12 +51,31 @@ function limpiarForm() {
   document.getElementById("password_operador").required = false;
 }
 
-async function subirFoto(file, path) {
+async function fileToBase64Op(file, maxSize = 200) {
   if (!file || file.size === 0) return null;
-  const storageRef = ref(storage, path);
-  await uploadBytes(storageRef, file);
-  return await getDownloadURL(storageRef);
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("No se pudo leer el archivo."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("El archivo no es una imagen válida."));
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let w = img.width, h = img.height;
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else       { w = Math.round(w * maxSize / h); h = maxSize; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
+
+// ── Inicializar cámara para foto de perfil del operador ──────
+inicializarCamara("foto_perfil_operador");
 
 // ── Listado en tiempo real ────────────────────────────────────
 document.addEventListener("sigep:auth-ready", () => {
@@ -177,7 +194,7 @@ form.addEventListener("submit", async (e) => {
     if (modoEdicion && inputId.value) {
       // ── ACTUALIZAR en Firestore ──────────────────────────
       if (foto) {
-        datos.foto_perfil_url = await subirFoto(foto, `operadores/${inputId.value}/perfil`);
+        datos.foto_perfil_url = await fileToBase64Op(foto);
       }
       await updateDoc(doc(db, "operadores", inputId.value), datos);
       mostrarMsg("success", `Operador ${nombres} ${apellidos} actualizado.`);
@@ -197,9 +214,9 @@ form.addEventListener("submit", async (e) => {
       const nuevoUid   = credencial.user.uid;
       await secondaryAuth.signOut(); // Limpiamos la sesión secundaria
 
-      // Subir foto de perfil
+      // Convertir foto de perfil a Base64
       if (foto) {
-        datos.foto_perfil_url = await subirFoto(foto, `operadores/${nuevoUid}/perfil`);
+        datos.foto_perfil_url = await fileToBase64Op(foto);
       }
 
       datos.fecha_registro = new Date();

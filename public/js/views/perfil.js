@@ -6,6 +6,11 @@
 // ============================================================
 
 import { db, auth } from "../firebase-config.js";
+import { inicializarCamara } from "../camera-widget.js";
+
+// ── Inicializar cámara para foto de perfil ───────────────────
+inicializarCamara("foto_nueva", "foto-perfil-preview");
+
 import {
   doc, getDoc, setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
