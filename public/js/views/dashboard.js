@@ -66,7 +66,7 @@ async function cargarTicketsHoy() {
       }
       // Agrupar por hora de ingreso
       if (t.fecha_hora_ingreso?.toDate) {
-        const hora = t.fecha_hora_ingreso.toDate().getHours();
+        const hora = t.fecha_hora_ingreso.toDate ? t.fecha_hora_ingreso.toDate().getHours() : new Date(t.fecha_hora_ingreso).getHours();
         facturacionPorHora[hora] += t.monto_total_pagado || 0;
       }
     });

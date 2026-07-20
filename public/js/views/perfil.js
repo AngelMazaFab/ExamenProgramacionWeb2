@@ -18,17 +18,17 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // ── DOM ───────────────────────────────────────────────────────
-const msgDiv        = document.getElementById("msg-perfil");
-const formFoto      = document.getElementById("form-perfil");
-const formPassword  = document.getElementById("form-password");
-const fotoPreview   = document.getElementById("foto-perfil-preview");
-const nombreDiv     = document.getElementById("nombre-perfil");
-const rolDiv        = document.getElementById("rol-perfil");
-const infoCorreo    = document.getElementById("info-correo");
-const infoTurno     = document.getElementById("info-turno");
-const infoCargo     = document.getElementById("info-cargo");
-const infoCedula    = document.getElementById("info-cedula");
-const infoFecha     = document.getElementById("info-fecha");
+const msgDiv = document.getElementById("msg-perfil");
+const formFoto = document.getElementById("form-perfil");
+const formPassword = document.getElementById("form-password");
+const fotoPreview = document.getElementById("foto-perfil-preview");
+const nombreDiv = document.getElementById("nombre-perfil");
+const rolDiv = document.getElementById("rol-perfil");
+const infoCorreo = document.getElementById("info-correo");
+const infoTurno = document.getElementById("info-turno");
+const infoCargo = document.getElementById("info-cargo");
+const infoCedula = document.getElementById("info-cedula");
+const infoFecha = document.getElementById("info-fecha");
 
 function mostrarMsg(tipo, msg) {
   msgDiv.innerHTML = `<div class="alert alert-${tipo}">${msg}</div>`;
@@ -46,15 +46,15 @@ document.addEventListener("sigep:auth-ready", async ({ detail }) => {
 function renderizarPerfil(perfil, user) {
   const nombre = `${perfil.nombres || ""} ${perfil.apellidos || ""}`.trim();
   nombreDiv.textContent = nombre || "Sin nombre";
-  rolDiv.textContent    = `Rol: ${(perfil.rol || "operador").replace("_", " ").toUpperCase()}`;
+  rolDiv.textContent = `Rol: ${(perfil.rol || "operador").replace("_", " ").toUpperCase()}`;
 
   if (perfil.foto_perfil_url) {
     fotoPreview.src = perfil.foto_perfil_url;
   }
 
   infoCorreo.textContent = user.email || "—";
-  infoTurno.textContent  = perfil.turno    || "—";
-  infoCargo.textContent  = perfil.cargo    || "—";
+  infoTurno.textContent = perfil.turno || "—";
+  infoCargo.textContent = perfil.cargo || "—";
   infoCedula.textContent = perfil.cedula_identidad || "—";
 
   if (perfil.fecha_registro?.toDate) {
@@ -75,36 +75,63 @@ function renderizarPerfil(perfil, user) {
 }
 
 // ── Actualizar foto de perfil ─────────────────────────────────
-formFoto.addEventListener("submit", async (e) => {
+document.getElementById("btn-actualizar-foto").addEventListener("click", async (e) => {
   e.preventDefault();
-  const file = document.getElementById("foto_nueva").files[0];
-  if (!file) {
-    mostrarMsg("warning", "Selecciona una imagen primero.");
-    return;
-  }
 
-  const uid = auth.currentUser?.uid;
-  if (!uid) return;
+  const btn = e.target;
+  const originalText = btn.textContent;
+  btn.textContent = "Subiendo...";
+  btn.disabled = true;
 
   try {
+    const file = document.getElementById("foto_nueva").files[0];
+    if (!file) {
+      mostrarMsg("warning", "Selecciona una imagen primero.");
+      btn.textContent = originalText;
+      btn.disabled = false;
+      return;
+    }
+
+    const uid = window.SIGEP?.user?.uid;
+    if (!uid) {
+      mostrarMsg("danger", "No se pudo identificar el usuario. Intenta recargar la página.");
+      btn.textContent = originalText;
+      btn.disabled = false;
+      return;
+    }
+
+    // Timeout de 20 segundos para detectar si Storage se cuelga
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Tiempo de espera agotado. Verifica tu conexión y los permisos de Firebase Storage.")), 20000)
+    );
+
     const storageRef = ref(storage, `operadores/${uid}/perfil`);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
+    const url = await Promise.race([
+      (async () => {
+        await uploadBytes(storageRef, file);
+        return await getDownloadURL(storageRef);
+      })(),
+      timeout
+    ]);
 
     await updateDoc(doc(db, "operadores", uid), { foto_perfil_url: url });
     fotoPreview.src = url;
     mostrarMsg("success", "Foto de perfil actualizada correctamente.");
     formFoto.reset();
   } catch (err) {
+    console.error("Error upload:", err);
     mostrarMsg("danger", `Error al subir foto: ${err.message}`);
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
   }
 });
 
 // ── Cambiar contraseña ───────────────────────────────────────
 formPassword.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const nueva      = document.getElementById("password_nueva").value;
-  const confirmar  = document.getElementById("password_confirmar").value;
+  const nueva = document.getElementById("password_nueva").value;
+  const confirmar = document.getElementById("password_confirmar").value;
 
   if (!nueva || nueva.length < 6) {
     mostrarMsg("warning", "La contraseña debe tener mínimo 6 caracteres.");

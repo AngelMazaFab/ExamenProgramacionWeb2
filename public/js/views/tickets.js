@@ -86,7 +86,7 @@ function cargarTicketsActivos() {
 }
 
 // ── Calcular tiempo y monto al seleccionar ticket ─────────────
-selTicket.addEventListener("change", async () => {
+async function recalcularMonto() {
   const selected = selTicket.selectedOptions[0];
   if (!selected || !selected.dataset.ingreso) {
     inputTiempo.value = "";
@@ -104,14 +104,21 @@ selTicket.addEventListener("change", async () => {
   const tarifa = await obtenerTarifa(selected.dataset.tipo || "estandar");
   inputTarifa.value = tarifa;
 
-  const horas = segundos / 3600;
-  inputMonto.value  = (horas * tarifa).toFixed(2);
-});
+  const tipoCobro = document.getElementById("tipo_cobro").value;
+  let monto = 0;
+  if (tipoCobro === "hora") {
+    const horas = segundos / 3600;
+    monto = horas * tarifa;
+  } else {
+    const dias = Math.max(1, Math.ceil(segundos / 86400));
+    monto = dias * (tarifa * 24);
+  }
+  inputMonto.value  = monto.toFixed(2);
+}
 
-// Recalcular al cambiar la fecha de salida
-inputFechaSal.addEventListener("change", () => {
-  if (selTicket.value) selTicket.dispatchEvent(new Event("change"));
-});
+selTicket.addEventListener("change", recalcularMonto);
+document.getElementById("tipo_cobro").addEventListener("change", recalcularMonto);
+inputFechaSal.addEventListener("change", recalcularMonto);
 
 // ── CHECKIN ───────────────────────────────────────────────────
 formCheckin.addEventListener("submit", async (e) => {
@@ -195,12 +202,20 @@ formCheckout.addEventListener("submit", async (e) => {
   try {
     const ticketSnap = await getDoc(doc(db, "tickets", ticketId));
     const ticketData = ticketSnap.data();
-    const ingreso    = ticketData.fecha_hora_ingreso.toDate();
+    const ingreso    = ticketData.fecha_hora_ingreso.toDate ? ticketData.fecha_hora_ingreso.toDate() : new Date(ticketData.fecha_hora_ingreso);
     const salida     = new Date(fechaSalida);
 
+    const tipoCobro  = document.getElementById("tipo_cobro").value;
     const segundos   = Math.max(0, Math.floor((salida - ingreso) / 1000));
     const tarifa     = await obtenerTarifa(ticketData.tipo_espacio || "estandar");
-    const monto      = parseFloat(((segundos / 3600) * tarifa).toFixed(2));
+    
+    let monto = 0;
+    if (tipoCobro === "hora") {
+      monto = parseFloat(((segundos / 3600) * tarifa).toFixed(2));
+    } else {
+      const dias = Math.max(1, Math.ceil(segundos / 86400));
+      monto = parseFloat((dias * (tarifa * 24)).toFixed(2));
+    }
 
     // Subir evidencia de salida si existe
     let evidenciaUrl = null;
@@ -214,6 +229,7 @@ formCheckout.addEventListener("submit", async (e) => {
     await updateDoc(doc(db, "tickets", ticketId), {
       fecha_hora_salida:     salida,
       tiempo_total_segundos: segundos,
+      tipo_cobro:            tipoCobro,
       tarifa_aplicada:       tarifa,
       monto_total_pagado:    monto,
       metodo_pago:           metodoPago,
@@ -236,7 +252,7 @@ formCheckout.addEventListener("submit", async (e) => {
       uid_operador:    window.SIGEP?.user?.uid || "",
       nombre_operador: `${window.SIGEP?.perfil?.nombres || ""} ${window.SIGEP?.perfil?.apellidos || ""}`.trim(),
       accion:          "checkout",
-      detalle:         `Check-out placa ${ticketData.placa_vehiculo}, monto $${monto}, método ${metodoPago}`,
+      detalle:         `Check-out placa ${ticketData.placa_vehiculo}, cobro por ${tipoCobro}, monto $${monto}, método ${metodoPago}`,
       ip_cliente:      "N/A",
       vista:           "tickets.html",
     });

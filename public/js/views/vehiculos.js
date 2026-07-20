@@ -110,6 +110,7 @@ function adjuntarBotonesTabla() {
       document.getElementById("marca").value       = v.marca || "";
       document.getElementById("modelo").value      = v.modelo || "";
       document.getElementById("color").value       = v.color || "";
+      document.getElementById("sexo_propietario").value = v.sexo_propietario || "";
       document.getElementById("nombre_propietario").value = v.nombre_propietario || "";
       document.getElementById("telefono_contacto").value  = v.telefono_contacto  || "";
       document.getElementById("correo_opcional").value    = v.correo_opcional     || "";
@@ -163,6 +164,7 @@ form.addEventListener("submit", async (e) => {
       marca:              document.getElementById("marca").value.trim(),
       modelo:             document.getElementById("modelo").value.trim(),
       color:              document.getElementById("color").value.trim(),
+      sexo_propietario:   document.getElementById("sexo_propietario").value,
       nombre_propietario: document.getElementById("nombre_propietario").value.trim(),
       telefono_contacto:  document.getElementById("telefono_contacto").value.trim(),
       correo_opcional:    document.getElementById("correo_opcional").value.trim(),

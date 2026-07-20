@@ -101,5 +101,13 @@ service cloud.firestore {
       allow update: if esSuperAdmin();
       allow delete: if esSuperAdmin();
     }
+    // ── encuestas ───────────────────────────────────────────
+    // Cualquier usuario (incluyendo anónimos) puede crear encuestas.
+    // Solo usuarios autenticados pueden leer.
+    match /encuestas/{id} {
+      allow read:   if request.auth != null;
+      allow create: if true;
+      allow update, delete: if esSuperAdmin();
+    }
   }
 }

@@ -194,6 +194,17 @@ btnDescargar.addEventListener("click", () => {
   pdf.setFontSize(8);
   pdf.setFont("helvetica", "italic");
   pdf.text("Conserve este comprobante. Verifique el QR en SIGEP.", 10, y);
+  
+  if ((ticketActual.estado_ticket || "").toLowerCase() === "pagado") {
+    y += 6;
+    pdf.setFont("helvetica", "bold");
+    pdf.text("¡Ayúdanos a mejorar! Evalúa nuestro servicio en:", 10, y);
+    y += 5;
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(0, 86, 210);
+    const surveyUrl = `${location.origin}/encuesta.html?ticket=${ticketIdActual}`;
+    pdf.text(surveyUrl, 10, y);
+  }
 
   pdf.save(`Comprobante_${ticketActual.placa_vehiculo}_${new Date().toISOString().slice(0,10)}.pdf`);
 });

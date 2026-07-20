@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,12 @@
   <meta name="description" content="CRUD completo de vehículos registrados en el sistema SIGEP de UrbanPark S.A.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="/css/styles.css">
 </head>
+
 <body class="site">
   <div id="layout-header"></div>
   <div id="layout-nav"></div>
@@ -27,7 +31,8 @@
           <input type="hidden" id="id_vehiculo" name="id_vehiculo">
 
           <label for="placa">Placa</label>
-          <input type="text" id="placa" name="placa" required style="text-transform:uppercase" placeholder="Ej. ABC-1234">
+          <input type="text" id="placa" name="placa" required style="text-transform:uppercase"
+            placeholder="Ej. ABC-1234">
 
           <label for="marca">Marca</label>
           <input type="text" id="marca" name="marca">
@@ -37,6 +42,14 @@
 
           <label for="color">Color</label>
           <input type="text" id="color" name="color">
+
+          <label for="sexo_propietario">Sexo del propietario</label>
+          <select id="sexo_propietario" name="sexo_propietario">
+            <option value="">— Seleccionar sexo —</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
 
           <label for="nombre_propietario">Nombre del propietario</label>
           <input type="text" id="nombre_propietario" name="nombre_propietario">
@@ -76,7 +89,9 @@
             </tr>
           </thead>
           <tbody id="tabla-vehiculos">
-            <tr><td colspan="8">Cargando vehículos...</td></tr>
+            <tr>
+              <td colspan="8">Cargando vehículos...</td>
+            </tr>
           </tbody>
         </table>
       </article>
@@ -89,4 +104,5 @@
   <script type="module" src="/js/auth-guard.js"></script>
   <script type="module" src="/js/views/vehiculos.js"></script>
 </body>
+
 </html>

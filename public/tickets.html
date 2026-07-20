@@ -52,6 +52,12 @@
           <label for="fecha_hora_salida">Fecha y hora de salida</label>
           <input type="datetime-local" id="fecha_hora_salida" name="fecha_hora_salida" required>
 
+          <label for="tipo_cobro">Tipo de cobro</label>
+          <select id="tipo_cobro" name="tipo_cobro" required>
+            <option value="hora">Por Hora</option>
+            <option value="dia">Por Día</option>
+          </select>
+
           <label for="tiempo_total">Tiempo total (segundos)</label>
           <input type="number" id="tiempo_total" name="tiempo_total" readonly placeholder="Calculado automáticamente">
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEP — Encuesta de Satisfacción</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="site">
+  <div id="layout-header"></div>
+  <div id="layout-nav"></div>
+
+  <main>
+    <section class="bay" style="max-width: 600px; margin: 2rem auto;">
+      <h2>Encuesta de Satisfacción</h2>
+      <p style="color:var(--steel); margin-bottom: 1.5rem;">Por favor, califica el servicio recibido.</p>
+      
+      <div id="msg-encuesta"></div>
+      
+      <form id="form-encuesta" style="display:none;">
+        <input type="hidden" id="ticketId" name="ticketId">
+        
+        <label for="calificacion">Calificación (1 a 5 estrellas)</label>
+        <select id="calificacion" name="calificacion" required>
+          <option value="">— Seleccionar —</option>
+          <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+          <option value="4">⭐⭐⭐⭐ Muy Bueno</option>
+          <option value="3">⭐⭐⭐ Bueno</option>
+          <option value="2">⭐⭐ Regular</option>
+          <option value="1">⭐ Malo</option>
+        </select>
+
+        <label for="comentarios">Comentarios (Opcional)</label>
+        <textarea id="comentarios" name="comentarios" rows="3" placeholder="¿Cómo podemos mejorar?"></textarea>
+
+        <button type="submit" id="btn-enviar-encuesta">Enviar Encuesta</button>
+      </form>
+    </section>
+  </main>
+  
+  <script type="module" src="/js/layout.js"></script>
+  <script type="module" src="/js/views/encuesta.js"></script>
+</body>
+</html>
