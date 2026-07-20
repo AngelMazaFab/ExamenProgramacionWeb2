@@ -26,5 +26,5 @@ export const firebaseConfig = {
 const app     = initializeApp(firebaseConfig);
 export const auth    = getAuth(app);
 export const db      = getFirestore(app);
-// Firebase Storage: intentar con el bucket configurado
-export const storage = getStorage(app, `gs://${env.FIREBASE_STORAGE_BUCKET}`);
+// Inicialización por defecto de Storage
+export const storage = getStorage(app);

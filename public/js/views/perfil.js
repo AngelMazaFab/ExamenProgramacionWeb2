@@ -7,7 +7,7 @@
 
 import { db, auth, storage } from "../firebase-config.js";
 import {
-  doc, getDoc, updateDoc
+  doc, getDoc, updateDoc, setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   updatePassword, reauthenticateWithCredential,
@@ -114,7 +114,7 @@ document.getElementById("btn-actualizar-foto").addEventListener("click", async (
       timeout
     ]);
 
-    await updateDoc(doc(db, "operadores", uid), { foto_perfil_url: url });
+    await setDoc(doc(db, "operadores", uid), { foto_perfil_url: url }, { merge: true });
     fotoPreview.src = url;
     mostrarMsg("success", "Foto de perfil actualizada correctamente.");
     formFoto.reset();

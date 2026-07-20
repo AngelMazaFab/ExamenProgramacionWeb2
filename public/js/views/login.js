@@ -5,7 +5,7 @@
 // ============================================================
 
 import { auth, db } from "../firebase-config.js";
-import { security } from "../security.js";
+const security = { secretKey: "SIGEP_KEY_2026" }; // Mocked for fingerprint login
 import {
   signInWithEmailAndPassword,
   onAuthStateChanged
