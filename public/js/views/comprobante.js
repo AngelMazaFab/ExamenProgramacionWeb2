@@ -44,7 +44,7 @@ function segundosATexto(seg) {
 // ── Buscar ticket ─────────────────────────────────────────────
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const busqueda = document.getElementById("ticket-id-busqueda").value.trim().toUpperCase();
+  const busqueda = document.getElementById("ticket-id-busqueda").value.trim();
   if (!busqueda) return;
 
   contenidoDiv.style.display = "none";
@@ -54,7 +54,7 @@ form.addEventListener("submit", async (e) => {
     let ticketSnap = null;
     let ticketId   = null;
 
-    // Intentar como ID directo primero
+    // Intentar como ID directo primero (sensible a mayúsculas/minúsculas)
     const directoRef  = doc(db, "tickets", busqueda);
     const directoSnap = await getDoc(directoRef);
 
@@ -62,10 +62,11 @@ form.addEventListener("submit", async (e) => {
       ticketSnap = directoSnap.data();
       ticketId   = directoSnap.id;
     } else {
-      // Buscar por placa (último ticket pagado)
+      // Buscar por placa (último ticket pagado) usando la placa en mayúsculas
+      const placaBusqueda = busqueda.toUpperCase();
       const q = query(
         collection(db, "tickets"),
-        where("placa_vehiculo", "==", busqueda),
+        where("placa_vehiculo", "==", placaBusqueda),
         where("estado_ticket", "in", ["Pagado", "pagado", "Activo", "activo"]),
         limit(1)
       );

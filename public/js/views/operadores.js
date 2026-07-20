@@ -33,6 +33,8 @@ const inputId     = document.getElementById("id_operador");
 const btnGuardar  = document.getElementById("btn-guardar-operador");
 const btnCancelar = document.getElementById("btn-cancelar-operador");
 const tablaBody   = document.getElementById("tabla-operadores");
+const btnCapturarHuella = document.getElementById("btn-capturar-huella");
+const inputHuella = document.getElementById("huella_digital_hash");
 
 let modoEdicion = false;
 
@@ -226,3 +228,71 @@ form.addEventListener("submit", async (e) => {
 });
 
 btnCancelar.addEventListener("click", limpiarForm);
+
+// ── CAPTURAR HUELLA DIGITAL (WebAuthn) ────────────────────────
+if (btnCapturarHuella) {
+  btnCapturarHuella.addEventListener("click", async () => {
+    if (!window.PublicKeyCredential) {
+      mostrarMsg("warning", "Tu navegador no soporta autenticación biométrica (WebAuthn).");
+      return;
+    }
+    
+    const correo = document.getElementById("correo_operador").value.trim() || "operador@urbanpark.com";
+    const nombres = document.getElementById("nombres").value.trim() || "Operador";
+    const passwordLocal = document.getElementById("password_operador").value;
+
+    if (!passwordLocal) {
+      mostrarMsg("warning", "Para vincular la huella en este dispositivo, por favor ingresa la contraseña del operador en el campo de arriba (incluso si estás editando).");
+      return;
+    }
+
+    try {
+      const challenge = new Uint8Array(32);
+      window.crypto.getRandomValues(challenge);
+      const userId = new Uint8Array(16);
+      window.crypto.getRandomValues(userId);
+
+      // WebAuthn requiere que rp.id coincida con el dominio actual.
+      const rpId = location.hostname === "127.0.0.1" ? "localhost" : location.hostname;
+
+      const credencial = await navigator.credentials.create({
+        publicKey: {
+          challenge: challenge,
+          rp: { name: "SIGEP UrbanPark", id: rpId },
+          user: { id: userId, name: correo, displayName: nombres },
+          pubKeyCredParams: [
+            { type: "public-key", alg: -7 },
+            { type: "public-key", alg: -257 }
+          ],
+          authenticatorSelection: {
+            authenticatorAttachment: "platform", // Fuerza el lector de huella/FaceID del dispositivo
+            userVerification: "required"
+          },
+          timeout: 60000
+        }
+      });
+
+      if (credencial && credencial.id) {
+        inputHuella.value = credencial.id;
+        
+        // Guardar credenciales de forma ofuscada en el dispositivo local (LocalStorage) 
+        // para permitir el inicio de sesión posterior mediante huella.
+        const huellasLocales = JSON.parse(localStorage.getItem("sigep_huellas") || "{}");
+        huellasLocales[credencial.id] = {
+           correo: correo,
+           p: btoa(security.secretKey + ":" + passwordLocal)
+        };
+        localStorage.setItem("sigep_huellas", JSON.stringify(huellasLocales));
+
+        mostrarMsg("success", "Huella capturada correctamente y vinculada a este dispositivo.");
+      }
+    } catch (err) {
+      console.error("WebAuthn Error:", err);
+      if (err.name === "NotAllowedError") {
+        mostrarMsg("warning", "Captura de huella cancelada por el usuario.");
+      } else {
+        mostrarMsg("danger", "Error al capturar huella: " + err.message);
+      }
+    }
+  });
+}
