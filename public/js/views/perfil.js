@@ -1,21 +1,18 @@
 // ============================================================
 // views/perfil.js — Gestión del Perfil de Usuario (P-10)
 // Carga los datos del operador desde Firestore, permite
-// actualizar la foto de perfil en Storage y cambiar la
-// contraseña en Firebase Auth.
+// actualizar la foto de perfil (guardada como Base64 en
+// Firestore) y cambiar la contraseña en Firebase Auth.
 // ============================================================
 
-import { db, auth, storage } from "../firebase-config.js";
+import { db, auth } from "../firebase-config.js";
 import {
-  doc, getDoc, updateDoc, setDoc
+  doc, getDoc, setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   updatePassword, reauthenticateWithCredential,
   EmailAuthProvider
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-  ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // ── DOM ───────────────────────────────────────────────────────
 const msgDiv = document.getElementById("msg-perfil");
@@ -33,6 +30,37 @@ const infoFecha = document.getElementById("info-fecha");
 function mostrarMsg(tipo, msg) {
   msgDiv.innerHTML = `<div class="alert alert-${tipo}">${msg}</div>`;
   setTimeout(() => { msgDiv.innerHTML = ""; }, 6000);
+}
+
+/**
+ * Convierte un File a un string Base64 (data URL).
+ * Se redimensiona a max 200x200 px para no exceder el límite
+ * de 1 MB por documento en Firestore.
+ */
+function fileToBase64(file, maxSize = 200) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("No se pudo leer el archivo."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("El archivo no es una imagen válida."));
+      img.onload = () => {
+        // Redimensionar con canvas
+        const canvas = document.createElement("canvas");
+        let w = img.width;
+        let h = img.height;
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else       { w = Math.round(w * maxSize / h); h = maxSize; }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 // ── Cargar datos del perfil ───────────────────────────────────
@@ -74,7 +102,7 @@ function renderizarPerfil(perfil, user) {
   });
 }
 
-// ── Actualizar foto de perfil ─────────────────────────────────
+// ── Actualizar foto de perfil (Base64 → Firestore) ───────────
 document.getElementById("btn-actualizar-foto").addEventListener("click", async (e) => {
   e.preventDefault();
 
@@ -92,6 +120,14 @@ document.getElementById("btn-actualizar-foto").addEventListener("click", async (
       return;
     }
 
+    // Validar tamaño (máx 5 MB antes de comprimir)
+    if (file.size > 5 * 1024 * 1024) {
+      mostrarMsg("warning", "La imagen es demasiado grande. Máximo 5 MB.");
+      btn.textContent = originalText;
+      btn.disabled = false;
+      return;
+    }
+
     const uid = window.SIGEP?.user?.uid;
     if (!uid) {
       mostrarMsg("danger", "No se pudo identificar el usuario. Intenta recargar la página.");
@@ -100,22 +136,13 @@ document.getElementById("btn-actualizar-foto").addEventListener("click", async (
       return;
     }
 
-    // Timeout de 20 segundos para detectar si Storage se cuelga
-    const timeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Tiempo de espera agotado. Verifica tu conexión y los permisos de Firebase Storage.")), 20000)
-    );
+    // Convertir imagen a Base64 (redimensionada a 200x200 max)
+    const base64Url = await fileToBase64(file);
 
-    const storageRef = ref(storage, `operadores/${uid}/perfil`);
-    const url = await Promise.race([
-      (async () => {
-        await uploadBytes(storageRef, file);
-        return await getDownloadURL(storageRef);
-      })(),
-      timeout
-    ]);
+    // Guardar directamente en Firestore (sin Firebase Storage)
+    await setDoc(doc(db, "operadores", uid), { foto_perfil_url: base64Url }, { merge: true });
 
-    await setDoc(doc(db, "operadores", uid), { foto_perfil_url: url }, { merge: true });
-    fotoPreview.src = url;
+    fotoPreview.src = base64Url;
     mostrarMsg("success", "Foto de perfil actualizada correctamente.");
     formFoto.reset();
   } catch (err) {
